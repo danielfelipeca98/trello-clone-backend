@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test WebSocket</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Prueba de WebSocket</h1>
+    <p id="status">Conectando...</p>
+    <button id="createTask">Crear Tarea</button>
+    <button id="updateTask">Actualizar Tarea</button>
+    <button id="deleteTask">Eliminar Tarea</button>
+    <ul id="tasks"></ul>
+
+    <script>
+        const socket = io('http://localhost:8080');
+
+        socket.on('connect', () => {
+            document.getElementById('status').textContent = '✅ Conectado';
+            document.getElementById('status').style.color = 'green';
+            console.log('✅ Conectado al servidor WebSocket');
+        });
+
+        socket.on('disconnect', () => {
+            document.getElementById('status').textContent = '❌ Desconectado';
+            document.getElementById('status').style.color = 'red';
+            console.log('❌ Desconectado del servidor');
+        });
+
+        // Escuchar tareas creadas
+        socket.on('task-created', (task) => {
+            console.log('📝 Tarea creada:', task);
+            const li = document.createElement('li');
+            li.textContent = `✅ ${task.title} - ${task.status}`;
+            document.getElementById('tasks').appendChild(li);
+        });
+
+        // Escuchar tareas actualizadas
+        socket.on('task-updated', (task) => {
+            console.log('🔄 Tarea actualizada:', task);
+            const li = document.createElement('li');
+            li.textContent = `🔄 ${task.title} - ${task.status}`;
+            document.getElementById('tasks').appendChild(li);
+        });
+
+        // Escuchar tareas eliminadas
+        socket.on('task-deleted', (taskId) => {
+            console.log('🗑️ Tarea eliminada:', taskId);
+            const li = document.createElement('li');
+            li.textContent = `🗑️ Tarea eliminada: ${taskId}`;
+            document.getElementById('tasks').appendChild(li);
+        });
+
+        // Enviar nueva tarea
+        document.getElementById('createTask').addEventListener('click', () => {
+            const task = {
+                title: `Tarea ${Date.now()}`,
+                status: 'pending'
+            };
+            socket.emit('new-task', task);
+            console.log('📤 Enviando tarea:', task);
+        });
+
+        // Enviar actualización
+        document.getElementById('updateTask').addEventListener('click', () => {
+            const task = {
+                id: Date.now(),
+                title: `Tarea actualizada ${Date.now()}`,
+                status: 'in-progress'
+            };
+            socket.emit('update-task', task);
+            console.log('📤 Actualizando tarea:', task);
+        });
+
+        // Enviar eliminación
+        document.getElementById('deleteTask').addEventListener('click', () => {
+            const taskId = Date.now();
+            socket.emit('delete-task', taskId);
+            console.log('📤 Eliminando tarea:', taskId);
+        });
+    </script>
+</body>
+</html>
