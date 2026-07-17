@@ -47,7 +47,10 @@ io.on('connection', (socket) => {
       try{
          const task = new Task ({
             title: taskData.title,
+            description: taskData.description || '',
             status: taskData.status || 'pending',
+            dueDate: taskData.dueDate || null,
+            assignedTo: taskData.assignedTo || null, 
             list: taskData.listId,
             position:0
 

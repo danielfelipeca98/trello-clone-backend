@@ -123,5 +123,37 @@ router.delete('/:id', auth, async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+router.post('/:boardId/members', auth, async (req, res) => {
+    try {
+        const boardId = req.params.boardId;
+        const { email } = req.body;
+        const board = await Board.findById(boardId);
+        if (!board) {
+            return res.status(404).json({ error: 'Tablero no encontrado' });
+        }
+        if (board.owner.toString() !== req.user.id) {
+            return res.status(403).json({ error: 'Solo el dueño puede agregar miembros' });
+        }
+        const userToAdd = await User.findOne({ email });
+        if (!userToAdd) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+        if (userToAdd._id.toString() === board.owner.toString()) {
+            return res.status(400).json({ error: 'El dueño ya tiene acceso' });
+        }
+        if (board.members.includes(userToAdd._id)) {
+            return res.status(400).json({ error: 'El usuario ya es miembro' });
+        }
+        board.members.push(userToAdd._id);
+        await board.save();
+        res.status(200).json({
+            message: 'Usuario agregado como miembro',
+            board
+        });
+    } catch (error) {
+        console.error('Error al agregar miembro:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
 
 export default router;

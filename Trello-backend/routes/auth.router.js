@@ -91,4 +91,14 @@ router.get('/profile', auth, (req, res) => {
     res.status(200).json({ user: req.user });
 });
 
+router.get('/users', auth, async (req, res) => {
+    try {
+        const users = await User.find({}, 'name email _id');
+        res.status(200).json({ users });
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
 export default router;
