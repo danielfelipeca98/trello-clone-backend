@@ -5,6 +5,9 @@ import './index.css'
 import App from './App.jsx'
 import Login from './components/Login.jsx'
 import Register from './components/Register.jsx';
+import NewTask from './components/NewTask.jsx';
+import EditTask from './components/jsx/EditTask.jsx';
+import Calendario from './components/jsx/calendario.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,6 +16,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<App />} />
         <Route path="/register" element={<Register />} />
+        <Route path='/new-task' element={<NewTask/>} />
+        <Route path='/edit-task' element= {<EditTask/>}/>
+        <Route path="/calendario" element={<Calendario />} />
         
       </Routes>
     </BrowserRouter>

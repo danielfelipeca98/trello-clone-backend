@@ -1,6 +1,7 @@
 // src/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './css/login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -27,6 +28,11 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify({
+          id: data.ID,
+          email: data.email,
+          name: data.name
+        }));
         navigate('/');
       } else {
         const data = await response.json();

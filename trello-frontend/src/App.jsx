@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
+
 import socket from './socket';
 import './App.css';
+import Header from './components/Header';
+import NewTask from './components/NewTask';
+import AddMemberForm from './components/jsx/AddMemberForm';
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
   const [listId, setListId] = useState('6a56a66b839585c7f69873a5');
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
+  const [boardId, setBoardId] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthAndFetchTasks = async () => {
@@ -39,6 +45,8 @@ function App() {
         if (response.ok) {
           const data = await response.json();
           setTasks(data.tasks || []);
+          setBoardId(data.boardId || '');
+          console.log('Board ID recibido:', data.boardId);
         } else {
           console.error('Error al cargar tareas', response.status);
         }
@@ -52,7 +60,7 @@ function App() {
     checkAuthAndFetchTasks();
   }, [listId]);
 
-  
+
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -75,21 +83,7 @@ function App() {
     };
   }, []);
 
-  const handleCreateTask = () => {
-    if (!newTask.trim() || !listId) {
-      alert('Escribe una tarea y asegúrate de tener un listId');
-      return;
-    }
-
-    const task = {
-      title: newTask,
-      status: 'Pending',
-      listId: listId,
-    };
-
-    socket.emit('new-task', task);
-    setNewTask('');
-  };
+  
 
   const handleDeleteTask = (taskId) => {
     socket.emit('delete-task', taskId);
@@ -100,33 +94,34 @@ function App() {
   }
 
   return (
+    <>
+    <Header listId={listId} />
     <div className="app">
       <h1>Lista de Tareas</h1>
 
-      <div className="create-task">
-        <input
-          type="text"
-          placeholder="Nueva tarea..."
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleCreateTask()}
-        />
-        <button onClick={handleCreateTask}>Crear</button>
-      </div>
-
-      <ul className="task-list">
-        {tasks.length === 0 ? (
-          <li className="empty-message">No hay tareas en esta lista</li>
-        ) : (
-          tasks.map((task) => (
-            <li key={task._id}>
-              <span>{task.title}</span>
-              <button onClick={() => handleDeleteTask(task._id)}>Eliminar</button>
-            </li>
-          ))
-        )}
-      </ul>
+      <ul className="task-list"> 
+  {tasks.length === 0 ? (
+    <li className="empty-message">No hay tareas en esta lista</li>
+  ) : (
+    tasks.map((task) => (
+      <li key={task._id}>
+        <div className="task-content">
+          <h3>{task.title}</h3>
+          {task.description && <p>{task.description}</p>}
+          <div className="task-meta">
+            <span className={`task-status ${task.status}`}>{task.status}</span>
+            <span className="task-date"> Fecha limite {new Date(task.createdAt).toLocaleDateString()}</span>
+          </div>
+        </div>
+        <button onClick={() => handleDeleteTask(task._id)}>Eliminar</button>
+        <button onClick={() => navigate(`/edit-task?taskId=${task._id}`)}>Editar</button>
+      </li>
+    ))
+  )}
+</ul>
     </div>
+    </>
+          
   );
 }
 
