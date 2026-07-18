@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import NewTask from './NewTask';
-
+import '../../App.css'
 function Header({ listId }) {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));

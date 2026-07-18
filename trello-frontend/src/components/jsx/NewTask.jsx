@@ -1,8 +1,8 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import socket from "../socket";
+import socket from "../../socket";
 import Header from "./Header";
-import './css/NewTask.css';
+import '../css/NewTask.css';
 
 function NewTask() {
     const navigate = useNavigate();

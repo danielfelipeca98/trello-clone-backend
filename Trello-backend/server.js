@@ -10,6 +10,7 @@ import taskRouter  from './routes/task.router.js'
 import boardRouter from './routes/board.router.js'; 
 import listRouter from './routes/list.router.js';  
 import Task from './models/task.model.js'; 
+import commentRouter from './routes/comment.router.js';
 
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/boards', boardRouter);
 app.use('/api/tasks', taskRouter);
 app.use('/api/lists', listRouter);
+app.use('/api/comments', commentRouter)
 
 const io = new SocketServer(server, {
    cors: {

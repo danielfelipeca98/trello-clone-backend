@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
 import App from './App.jsx'
-import Login from './components/Login.jsx'
-import Register from './components/Register.jsx';
-import NewTask from './components/NewTask.jsx';
+import Login from './components/jsx/Login.jsx'
+import Register from './components/jsx/Register.jsx'
+import NewTask from './components/jsx/NewTask.jsx';
 import EditTask from './components/jsx/EditTask.jsx';
-import Calendario from './components/jsx/calendario.jsx';
+import Calendario from './components/jsx/Calendario.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

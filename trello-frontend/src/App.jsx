@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
 
-import socket from './socket';
-import './App.css';
-import Header from './components/Header';
-import NewTask from './components/NewTask';
-import AddMemberForm from './components/jsx/AddMemberForm';
+import Login from './components/jsx/Login.jsx';
+import Register from './components/jsx/Register.jsx';
+import Header from './components/jsx/Header.jsx';
+import NewTask from './components/jsx/NewTask.jsx';
+import './components/css/Calendario.css'; 
+
+
+const socket = io('http://localhost:8080', {
+  withCredentials: true,
+  transports: ['websocket']
+});
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -13,6 +20,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [boardId, setBoardId] = useState('');
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const checkAuthAndFetchTasks = async () => {
@@ -90,8 +98,15 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="loading">Cargando...</div>;
-  }
+  return (
+    <>
+      <Header listId={listId} />
+      <div className="calendario-container">
+        <h1>Cargando...</h1>
+      </div>
+    </>
+  );
+}
 
   return (
     <>

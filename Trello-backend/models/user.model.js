@@ -27,8 +27,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-// ✅ ELIMINO EL MIDDLEWARE COMPLETAMENTE (lo haré en la ruta)
-// userSchema.pre('save', function(next) { ... });
+
 
 userSchema.methods.comparePassword = async function(candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
