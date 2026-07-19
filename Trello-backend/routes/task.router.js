@@ -48,23 +48,33 @@ router.post('/', auth, async (req, res) => {
 })
 
 router.get('/list/:listId', auth, async (req, res) => {
-    console.log('Ruta /list/:listId ejecutada con ID:', req.params.listId);
+    console.log('🔍 Ruta /list/:listId ejecutada con ID:', req.params.listId);
+    console.log('🔍 Usuario autenticado:', req.user.id);
+
     try {
         const listId = req.params.listId;
         const list = await List.findById(listId);
-        const boardId = list.board; 
+        console.log('🔍 Lista encontrada:', list ? 'Sí' : 'No');
+        const boardId = list.board;
         if (!list) {
             console.log('Lista no encontrada');
+            console.log('❌ Lista no encontrada');
             return res.status(404).json({ error: 'Lista no encontrado' })
         }
         const board = await Board.findById(list.board);
+        console.log('🔍 Board encontrado:', board ? 'Sí' : 'No');
         if (!board) {
-            console.log('Tablero no encontrado');
+            console.log('❌ Tablero no encontrado');
             return res.status(404).json({ error: 'Tablero no encontrado' });
         }
         const isOwner = board.owner.toString() === req.user.id;
         const isMember = board.members.some(member => member.toString() === req.user.id)
+        console.log('🔍 Es dueño:', isOwner);
+        console.log('🔍 Es miembro:', isMember);
+        console.log('🔍 Owner del board:', board.owner.toString());
+        console.log('🔍 ID del usuario:', req.user.id);
         if (!isOwner && !isMember) {
+            console.log('❌ Usuario no tiene acceso al tablero');
             return res.status(403).json({ error: 'No tienes acceso a este tablero' });
         }
         const tasks = await Task.find({ list: listId })
@@ -75,7 +85,7 @@ router.get('/list/:listId', auth, async (req, res) => {
             boardId: boardId
         })
     } catch (error) {
-        console.error('Error al obtener listas:', error);
+        console.error('❌ Error al obtener listas:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
 
     }
